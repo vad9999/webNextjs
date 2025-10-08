@@ -1,4 +1,4 @@
-import { getStudentsDb } from '@/db/studentDb';
+import { getStudentsDb, deleteStudentDb } from '@/db/studentDb';
 
 export async function GET(): Promise<Response> {
     const students = await getStudentsDb();
