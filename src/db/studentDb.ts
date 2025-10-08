@@ -1,5 +1,5 @@
-// src/lib/db.ts
 import sqlite3 from 'sqlite3';
+import type StudentInterface from '@/types/StudentInterface';
 
 export const deleteStudentDb = async (id: number): Promise<void> => {
   const db = new sqlite3.Database(process.env.DB ?? './db/vki-web.db');
@@ -8,24 +8,19 @@ export const deleteStudentDb = async (id: number): Promise<void> => {
     const sql = 'DELETE FROM student WHERE id = ?';
     db.run(sql, [id], function (err) {
       if (err) {
-        console.error('❌ Ошибка SQLite при удалении:', err);
         reject(new Error('Database error'));
         return;
       }
 
       if (this.changes === 0) {
-        console.warn(`⚠️ Студент с ID ${id} не найден`);
         reject(new Error('Student not found'));
         return;
       }
-
-      console.log(`✅ Удалён студент с ID ${id}`);
       resolve();
     });
   });
 };
 
-// Аналогично для getStudentsDb
 export const getStudentsDb = async (): Promise<any[]> => {
   const db = new sqlite3.Database(process.env.DB ?? './db/vki-web.db');
   return new Promise((resolve, reject) => {
@@ -35,6 +30,25 @@ export const getStudentsDb = async (): Promise<any[]> => {
         return;
       }
       resolve(rows);
+    });
+  });
+};
+
+export const addStudentDb = async (student: Omit<StudentInterface, 'id'>): Promise<number> => {
+  const db = new sqlite3.Database(process.env.DB ?? './db/vki-web.db');
+
+  return new Promise((resolve, reject) => {
+    const { last_name, first_name, middle_name, groupId } = student;
+    const query = `
+      INSERT INTO student (last_name, first_name, middle_name, groupId)
+      VALUES (?, ?, ?, ?)
+    `;
+    db.run(query, [last_name, first_name, middle_name, groupId], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
     });
   });
 };

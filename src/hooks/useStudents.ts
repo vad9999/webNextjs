@@ -13,6 +13,16 @@ const deleteStudent = async (id: number): Promise<void> => {
   if (!res.ok) throw new Error('Failed to delete student');
 };
 
+const addStudent = async (newStudent: Omit<StudentInterface, 'id'>): Promise<StudentInterface> => {
+  const res = await fetch('/api/students', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newStudent),
+  });
+  if (!res.ok) throw new Error('Failed to add student');
+  return res.json();
+};
+
 const useStudents = () => {
   const queryClient = useQueryClient();
 
@@ -23,34 +33,40 @@ const useStudents = () => {
 
   const { mutate: removeStudent } = useMutation({
     mutationFn: deleteStudent,
-    //  Оптимистичное обновление
     onMutate: async (id) => {
-      // Отменяем исходящие запросы (например, другие мутации)
       await queryClient.cancelQueries({ queryKey: ['students'] });
-
-      // Сохраняем предыдущую версию данных для отката
       const previousStudents = queryClient.getQueryData<StudentInterface[]>(['students']);
-
-      // Обновляем кэш немедленно: удаляем студента
       queryClient.setQueryData<StudentInterface[]>(['students'], (old) =>
         old ? old.filter(student => student.id !== id) : []
       );
-
-      // Возвращаем контекст для отката
       return { previousStudents };
     },
-    // Откат в случае ошибки
     onError: (err, id, context) => {
       console.error('Ошибка удаления:', err);
       queryClient.setQueryData(['students'], context?.previousStudents);
     },
-    // Обновление после успеха (на всякий случай)
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['students'] });
     },
   });
 
-  return { students, isLoading, removeStudent };
+  const { mutate: addStudentMutate, isPending: isAdding } = useMutation({
+    mutationFn: addStudent,
+    onSuccess: (newStudent) => {
+      queryClient.setQueryData<StudentInterface[]>(['students'], (old = []) => [
+        ...old,
+        newStudent,
+      ]);
+    },
+  });
+
+  return {
+    students,
+    isLoading,
+    removeStudent,
+    addStudent: addStudentMutate,
+    isAdding,
+  };
 };
 
 export default useStudents;

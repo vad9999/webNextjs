@@ -1,4 +1,5 @@
-import { getStudentsDb, deleteStudentDb } from '@/db/studentDb';
+import { getStudentsDb, addStudentDb } from '@/db/studentDb';
+import { NextRequest } from 'next/server';
 
 export async function GET(): Promise<Response> {
     const students = await getStudentsDb();
@@ -9,3 +10,30 @@ export async function GET(): Promise<Response> {
         },
     });
 };
+
+export async function POST(request: NextRequest): Promise<Response> {
+  const body = await request.json();
+
+  const id = await addStudentDb({
+    last_name: body.last_name,
+    first_name: body.first_name,
+    middle_name: body.middle_name,
+    groupId: body.groupId,
+  });
+
+  return new Response(
+    JSON.stringify({
+      id,
+      last_name: body.last_name,
+      first_name: body.first_name,
+      middle_name: body.middle_name,
+      groupId: body.groupId,
+    }),
+    {
+      status: 201,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+}

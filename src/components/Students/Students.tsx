@@ -1,12 +1,11 @@
-// src/components/Students/Students.tsx
 'use client';
 import useStudents from '@/hooks/useStudents';
 import type StudentInterface from '@/types/StudentInterface';
-import Student from './Student'; // ← импортируем новый компонент
-import styles from './Student.module.scss'; // или создайте Students.module.scss, если нужно
+import Student from './Student'; 
+import styles from './Student.module.scss'; 
 
 const Students = (): React.ReactElement => {
-  const { students, removeStudent } = useStudents(); // ← предполагаем, что хук возвращает removeStudent
+  const { students, removeStudent } = useStudents(); 
 
   return (
     <div className={styles.Students}>
@@ -14,7 +13,7 @@ const Students = (): React.ReactElement => {
         <Student
           key={student.id}
           student={student}
-          onDelete={removeStudent} // ← передаём функцию удаления
+          onDelete={removeStudent} 
         />
       ))}
     </div>
