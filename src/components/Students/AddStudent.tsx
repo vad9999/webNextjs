@@ -1,4 +1,3 @@
-// components/AddStudentForm.tsx
 'use client';
 import { useForm } from 'react-hook-form';
 import type StudentInterface from '@/types/StudentInterface';
@@ -25,43 +24,66 @@ const AddStudentForm = ({ onAdd, isAdding }: AddStudentFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="mb-6">
+
       <div className="mb-3">
         <input
-          {...register('last_name', { required: 'Фамилия обязательна' })}
+          {...register('uuid', { required: 'uuid обязательна' })}
+          placeholder="uuid"
+          className="border p-2 w-full"
+        />
+        {errors.uuid && (
+          <p className="text-red-500 text-sm">{errors.uuid.message}</p>
+        )}
+      </div>
+
+      <div className="mb-3">
+        <input
+          {...register('lastName', { required: 'Фамилия обязательна' })}
           placeholder="Фамилия"
           className="border p-2 w-full"
         />
-        {errors.last_name && (
-          <p className="text-red-500 text-sm">{errors.last_name.message}</p>
+        {errors.lastName && (
+          <p className="text-red-500 text-sm">{errors.lastName.message}</p>
         )}
       </div>
 
       <div className="mb-3">
         <input
-          {...register('first_name', { required: 'Имя обязательно' })}
+          {...register('firstName', { required: 'Имя обязательно' })}
           placeholder="Имя"
           className="border p-2 w-full"
         />
-        {errors.first_name && (
-          <p className="text-red-500 text-sm">{errors.first_name.message}</p>
+        {errors.firstName && (
+          <p className="text-red-500 text-sm">{errors.firstName.message}</p>
         )}
       </div>
 
       <div className="mb-3">
         <input
-          {...register('middle_name', { required: 'Отчество обязательно' })}
+          {...register('middleName', { required: 'Отчество обязательно' })}
           placeholder="Отчество"
           className="border p-2 w-full"
         />
-        {errors.middle_name && (
-          <p className="text-red-500 text-sm">{errors.middle_name.message}</p>
+        {errors.middleName && (
+          <p className="text-red-500 text-sm">{errors.middleName.message}</p>
+        )}
+      </div>
+
+      <div className="mb-3">
+        <input
+          {...register('contacts', { required: 'Контакты обязательно' })}
+          placeholder="Контакты"
+          className="border p-2 w-full"
+        />
+        {errors.contacts && (
+          <p className="text-red-500 text-sm">{errors.contacts.message}</p>
         )}
       </div>
 
       <div className="mb-3">
         <input
           type="number"
-          {...register('groupId', { 
+          {...register('groupId', {
             required: 'ID группы обязателен',
             valueAsNumber: true,
           })}

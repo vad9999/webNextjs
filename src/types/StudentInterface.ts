@@ -1,8 +1,10 @@
 interface StudentInterface {
   id: number;
-  last_name: string;
-  first_name: string;
-  middle_name: string;
+  uuid?: string;
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  contacts?: string;
   groupId: number;
 };
 
